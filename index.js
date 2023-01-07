@@ -21,7 +21,7 @@ const players = [
           y: 0,
         },
         hits: [],
-        orientation: 'vertical',
+        orientation: 0,
       },
       {
         name: 'Battleship',
@@ -31,7 +31,7 @@ const players = [
           y: 0,
         },
         hits: [],
-        orientation: 'vertical',
+        orientation: 0,
       },
       {
         name: 'Cruiser',
@@ -41,7 +41,7 @@ const players = [
           y: 0,
         },
         hits: [],
-        orientation: 'vertical',
+        orientation: 0,
       },
       {
         name: 'Submarine',
@@ -51,7 +51,7 @@ const players = [
           y: 0,
         },
         hits: [],
-        orientation: 'vertical',
+        orientation: 0,
       },
       {
         name: 'Destroyer',
@@ -61,7 +61,7 @@ const players = [
           y: 0,
         },
         hits: [],
-        orientation: 'horizontal',
+        orientation: 1,
       },
     ],
     radar: [],
@@ -76,7 +76,7 @@ const players = [
           y: 0,
         },
         hits: [],
-        orientation: 'vertical',
+        orientation: 0,
       },
       {
         name: 'Battleship',
@@ -86,7 +86,7 @@ const players = [
           y: 0,
         },
         hits: [],
-        orientation: 'horizontal',
+        orientation: 1,
       },
       {
         name: 'Cruiser',
@@ -96,7 +96,7 @@ const players = [
           y: 0,
         },
         hits: [],
-        orientation: 'vertical',
+        orientation: 0,
       },
       {
         name: 'Submarine',
@@ -106,17 +106,17 @@ const players = [
           y: 6,
         },
         hits: [],
-        orientation: 'vertical',
+        orientation: 0,
       },
       {
         name: 'Destroyer',
         size: 2,
         pos: {
           x: 6,
-          y: 0,
+          y: 1,
         },
         hits: [],
-        orientation: 'vertical',
+        orientation: 0,
       },
     ],
     radar: [],
@@ -133,12 +133,9 @@ function getShip(player, name) {
 }
 
 function positionShip(player, name, x, y, orientation) {
-  const orientations = {
-    0: 'vertical',
-    1: 'horizontal',
-  };
-
   const ship = getShip(player, name);
+
+  orientation === undefined ? ship.orientation : orientation;
 
   if (
     y < 0 ||
@@ -153,7 +150,7 @@ function positionShip(player, name, x, y, orientation) {
   }
 
   ship.pos = { x: x, y: y };
-  ship.orientation = orientations[orientation];
+  ship.orientation = orientation;
 
   renderShips(player);
 }
@@ -196,9 +193,11 @@ function renderGrid(grid, cellSize) {
 }
 
 function renderShips(player) {
-  Array.from(document.getElementsByClassName('ship')).forEach((ship) =>
-    ship.remove()
-  );
+  Array.from([
+    ...document.getElementsByClassName('hit'),
+    ...document.getElementsByClassName('miss'),
+    ...document.getElementsByClassName('ship'),
+  ]).forEach((ship) => ship.remove());
 
   const ships = players[player].ships;
 
@@ -207,14 +206,16 @@ function renderShips(player) {
     shipNode.className = 'ship';
 
     Object.assign(shipNode.style, {
-      width: `${ship.orientation === 'horizontal' ? 40 * ship.size : 40}px`,
-      height: `${ship.orientation === 'vertical' ? 40 * ship.size : 40}px`,
+      width: `${ship.orientation === 1 ? 40 * ship.size : 40}px`,
+      height: `${ship.orientation === 0 ? 40 * ship.size : 40}px`,
       top: `${ship.pos.y * 40}px`,
       left: `${ship.pos.x * 40}px`,
     });
 
     gridNode.append(shipNode);
   });
+
+  renderHits(player);
 }
 
 function renderHits(player) {
@@ -262,7 +263,7 @@ function target(a, b, x, y) {
     const pos = [];
 
     for (let i = 0; i < ship.size; i++) {
-      if (ship.orientation === 'vertical')
+      if (ship.orientation === 0)
         pos.push({ x: ship.pos.x, y: ship.pos.y + i });
       else pos.push({ x: ship.pos.x + i, y: ship.pos.y });
     }
@@ -300,4 +301,5 @@ window.bs = {
   target: target,
   getShip: getShip,
   renderRadar: renderRadar,
+  renderShips: renderShips,
 };
