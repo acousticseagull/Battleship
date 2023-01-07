@@ -33,8 +33,19 @@
 }
 
 .hit {
+  position: absolute;
   width: 40px;
   height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hit::before {
+  content: '';
+  display: block;
+  width: 25px;
+  height: 25px;
   border-radius: 100%;
   background-color: rgb(255, 0, 0);
 }

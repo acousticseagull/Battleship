@@ -2,7 +2,7 @@ import './style.css';
 
 const game = document.getElementById('game');
 
-const SHIPS = {
+const SHIP = {
   Carrier: 'Carrier',
   Battleship: 'Battleship',
   Cruiser: 'Crusier',
@@ -130,8 +130,6 @@ renderShips(0);
 
 game.append(gridNode);
 
-
-
 function getShip(player, name) {
   return players[player].ships.find((ship) => ship.name === name);
 }
@@ -220,21 +218,36 @@ function renderShips(player) {
 }
 
 function renderHits(player) {
-  players[player].ships.forEach(ship => {
-    
+  Array.from(document.getElementsByClassName('hit')).forEach((ship) =>
+    ship.remove()
+  );
+
+  players[player].ships.forEach((ship) => {
+    ship.hits.forEach((hit) => {
+      const node = document.createElement('div');
+      node.className = 'hit';
+
+      Object.assign(node.style, {
+        top: `${hit.y * 40}px`,
+        left: `${hit.x * 40}px`,
+      });
+
+      gridNode.append(node);
+    });
   });
 }
 
 function target(a, b, x, y) {
-  const ship = players[b].ships.find(ship => {
+  const ship = players[b].ships.find((ship) => {
     const pos = [];
 
-    for (let i=0; i<ship.size; i++) {
-      if (ship.orientation === 'vertical') pos.push({ x: ship.pos.x, y: ship.pos.y + i });
+    for (let i = 0; i < ship.size; i++) {
+      if (ship.orientation === 'vertical')
+        pos.push({ x: ship.pos.x, y: ship.pos.y + i });
       else pos.push({ x: ship.pos.x + i, y: ship.pos.y });
     }
 
-    const hit = pos.find(pos => pos.x === x && pos.y === y);
+    const hit = pos.find((pos) => pos.x === x && pos.y === y);
 
     if (hit) ship.hits.push(hit);
 
@@ -242,8 +255,15 @@ function target(a, b, x, y) {
   });
 
   if (ship) console.info(`You hit the ${ship.name}!`);
+  if (ship.hits.length === ship.size)
+    console.info(`You sunk the ${ship.name}!`);
+
+  renderHits(b);
 }
 
-window.positionShip = positionShip;
-window.SHIPS = SHIPS;
-window.target = target;
+window.bs = {
+  SHIP: SHIP,
+  positionShip: positionShip,
+  target: target,
+  getShip: getShip,
+};
