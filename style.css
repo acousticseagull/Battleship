@@ -1,0 +1,40 @@
+* {
+  box-sizing: border-box;
+}
+
+.grid {
+  position: relative;
+  border: 3px solid rgba(0, 0, 0, 0.4);
+  display: inline-block;
+}
+
+.cell {
+  display: inline-block;
+  border-right: 1px solid rgba(0, 0, 0, 0.4);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.4);
+  background-color: rgba(0, 0, 0, 0);
+}
+
+.cell:first-child {
+  border-left: 1px solid rgba(0, 0, 0, 0.4);
+}
+
+.row {
+}
+
+.row:first-child > .cell {
+  border-top: 1px solid rgba(0, 0, 0, 0.4);
+}
+
+.ship {
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.3);
+  border-radius: 50px;
+}
+
+.hit {
+  width: 40px;
+  height: 40px;
+  border-radius: 100%;
+  background-color: rgb(255, 0, 0);
+}
