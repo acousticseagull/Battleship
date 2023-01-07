@@ -64,7 +64,7 @@ const players = [
         orientation: 'horizontal',
       },
     ],
-    grid: [],
+    radar: [],
   },
   {
     ships: [
@@ -82,17 +82,17 @@ const players = [
         name: 'Battleship',
         size: 4,
         pos: {
-          x: 1,
+          x: 3,
           y: 0,
         },
         hits: [],
-        orientation: 'vertical',
+        orientation: 'horizontal',
       },
       {
         name: 'Cruiser',
         size: 3,
         pos: {
-          x: 2,
+          x: 8,
           y: 0,
         },
         hits: [],
@@ -102,8 +102,8 @@ const players = [
         name: 'Submarine',
         size: 3,
         pos: {
-          x: 3,
-          y: 0,
+          x: 7,
+          y: 6,
         },
         hits: [],
         orientation: 'vertical',
@@ -112,21 +112,19 @@ const players = [
         name: 'Destroyer',
         size: 2,
         pos: {
-          x: 4,
+          x: 6,
           y: 0,
         },
         hits: [],
         orientation: 'vertical',
       },
     ],
-    grid: [],
+    radar: [],
   },
 ];
 
 const grid = createGrid(10);
 const gridNode = renderGrid(grid, 40);
-
-renderShips(0);
 
 game.append(gridNode);
 
@@ -237,6 +235,26 @@ function renderHits(player) {
   });
 }
 
+function renderRadar(player) {
+  Array.from([
+    ...document.getElementsByClassName('hit'),
+    ...document.getElementsByClassName('miss'),
+    ...document.getElementsByClassName('ship'),
+  ]).forEach((item) => item.remove());
+
+  players[player].radar.forEach((item) => {
+    const node = document.createElement('div');
+    node.className = item.name;
+
+    Object.assign(node.style, {
+      top: `${item.y * 40}px`,
+      left: `${item.x * 40}px`,
+    });
+
+    gridNode.append(node);
+  });
+}
+
 function target(a, b, x, y) {
   const ship = players[b].ships.find((ship) => {
     const pos = [];
@@ -249,16 +267,27 @@ function target(a, b, x, y) {
 
     const hit = pos.find((pos) => pos.x === x && pos.y === y);
 
-    if (hit) ship.hits.push(hit);
+    if (hit) {
+      ship.hits.push(hit);
+      players[a].radar.push({
+        name: 'hit',
+        ...hit,
+      });
+    } else {
+      players[a].radar.push({
+        name: 'miss',
+        ...hit,
+      });
+    }
 
     return hit;
   });
 
   if (ship) console.info(`You hit the ${ship.name}!`);
-  if (ship.hits.length === ship.size)
+  if (ship && ship.hits.length === ship.size)
     console.info(`You sunk the ${ship.name}!`);
 
-  renderHits(b);
+  renderRadar(a);
 }
 
 window.bs = {
@@ -266,4 +295,5 @@ window.bs = {
   positionShip: positionShip,
   target: target,
   getShip: getShip,
+  renderRadar: renderRadar,
 };
