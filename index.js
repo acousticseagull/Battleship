@@ -135,7 +135,7 @@ function getShip(player, name) {
 function positionShip(player, name, x, y, orientation) {
   const ship = getShip(player, name);
 
-  orientation === undefined ? ship.orientation : orientation;
+  orientation ??= ship.orientation;
 
   if (
     y < 0 ||
