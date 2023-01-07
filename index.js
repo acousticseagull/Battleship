@@ -179,6 +179,8 @@ function renderGrid(grid, cellSize) {
       const cellNode = document.createElement('div');
       cellNode.className = 'cell';
 
+      cellNode.textContent = `${x},${y}`;
+
       Object.assign(cellNode.style, {
         width: `${cellSize}px`,
         height: `${cellSize}px`,
@@ -276,7 +278,8 @@ function target(a, b, x, y) {
     } else {
       players[a].radar.push({
         name: 'miss',
-        ...hit,
+        x,
+        y,
       });
     }
 
@@ -284,6 +287,7 @@ function target(a, b, x, y) {
   });
 
   if (ship) console.info(`You hit the ${ship.name}!`);
+  else console.info(`You missed!`);
   if (ship && ship.hits.length === ship.size)
     console.info(`You sunk the ${ship.name}!`);
 
